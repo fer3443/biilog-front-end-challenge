@@ -1,13 +1,14 @@
 import axios from "axios";
 
-const apiKey = process.env.API_KEY as string;
-const token = process.env.TOKEN;
-
 export const professionalApi = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_PROFESSIONAL_API,
+  baseURL: process.env.PROFESSIONAL_API_URL,
   headers: {
     "Content-Type": "application/json",
-    'Authorization': `Bearer ${token}`,
-    'apiKey': apiKey
   }
+})
+
+professionalApi.interceptors.request.use((config) => {
+  config.headers.Authorization = `Bearer ${process.env.TOKEN}`;
+  config.headers.apiKey = process.env.API_KEY as string;
+  return config
 })
