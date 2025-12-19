@@ -12,6 +12,9 @@ export interface Appointment {
   patient_email?: string;
   patient_phone?: string;
   professional_name: string;
+  date: string;
+  from: string;
+  to: string;
   status: AppointmentStatus;
   notes?: string; // Notas del paciente o motivo de consulta
   cancellation_reason?: string; // Razón de cancelación si aplica
