@@ -15,7 +15,7 @@ interface ProfessionalState {
   toggleEnabled: () => void;
 };
 
-const storeApi: StateCreator<ProfessionalState> = (set, get) => ({
+const storeApi: StateCreator<ProfessionalState> = (set) => ({
   professionals: [],
 
   nameFilter: "",
