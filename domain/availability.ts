@@ -15,7 +15,7 @@ const isTimeInRange = (time: string, from: string, to: string): boolean => {
 };
 
 const getWeekDay = (date: string) => {
-  const day = new Date(date).toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
+  const day = new Date(date + 'T00:00:00').toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
   return day
 };
 
@@ -31,12 +31,11 @@ export const isWithInWorkingHours = (prof: Professional, date: string, from: str
   const day = getWeekDay(date);
   //pregunto si esta disp ese dia
   const schedulesForDay = prof.schedules.filter((schedule) => schedule.day === day);
-  if (!schedulesForDay.length) return false;
+  if (schedulesForDay.length === 0) return false;
   //si está disp entonces comparo los horarios
   const isAvailableHours = schedulesForDay.some((schedule) => {
     return (isTimeInRange(from, schedule.from, schedule.to) && isTimeInRange(to, schedule.from, schedule.to))
   });
-
   return isAvailableHours;
 };
 
@@ -53,7 +52,7 @@ export const isTimeSlotFree = (profId: string, date: string, from: string, to: s
     const appFrom = timeToMinutes(appointment.from);
     const appTo = timeToMinutes(appointment.to);
 
-    return appFrom > toMin && appTo < fromMin
+    return fromMin < appTo && toMin > appFrom;
   });
 
   return isFree
@@ -64,4 +63,16 @@ export const isProfessionalAvailable = (prof: Professional, appointments: Appoin
   if (hasAbsenceOnDate(prof, date)) return false;
   if (!isWithInWorkingHours(prof, date, from, to)) return false;
   return isTimeSlotFree(prof.id, date, from, to, appointments)
+}
+
+export type SlotStatus = "available" | "occupied" | "unavailable";
+
+export const getSlotStatus = (prof: Professional, appointments: Appointment[], date: string, from: string, to: string): SlotStatus => {
+  if (!isProfessionalEnabled(prof)) {
+    return "unavailable";
+  }
+  const isFree = isTimeSlotFree(prof.id, date, from, to, appointments);
+  if (!isFree) return 'occupied';
+
+  return 'available'
 }

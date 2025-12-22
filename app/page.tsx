@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   description: "Frontend challenge based on a medical schedule"
 }
 export default async function Home() {
-  const professionals = await getProffesionalAction();  // console.log(professionals)
+  const professionals = await getProffesionalAction();
   return (
     <div className="min-h-screen bg-linear-to-b from-slate-50 to-slate-200 p-4">
       <h1 className="text-2xl text-black">Bilog Frontend Challenge</h1>
