@@ -16,7 +16,6 @@ const appointmentStore: StateCreator<AppointmentState> = (set, get) => ({
 
   createAppointment: (professional: Professional, appointment: Appointment) => {
     const appointments = get().appointments;
-
     const isAvailable = isProfessionalAvailable(
       professional,
       appointments,
@@ -24,7 +23,7 @@ const appointmentStore: StateCreator<AppointmentState> = (set, get) => ({
       appointment.from,
       appointment.to
     );
-
+    console.log(isAvailable, "desde zustand")
     if (!isAvailable) return false;
     set((state) => ({ appointments: [...state.appointments, appointment] }))
     return true;

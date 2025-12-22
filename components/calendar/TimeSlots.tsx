@@ -1,7 +1,20 @@
+import React from 'react';
+
 import { Card } from '../ui/card';
 import { format } from 'date-fns';
 import { useFilteredProfessionals } from '@/store/professional.selector';
 import { useAppointmentStore } from '@/store/appointment.store';
+import { TimeSlot } from './TimeSlot';
+import { addMinutesToTime } from '@/utils/add-minutes-to-time';
+import { Professional } from '@/types';
+import { AppointmentDialog } from '../appointment/AppointmentDialog';
+
+interface DialogProps {
+  professional: Professional;
+  date: string;
+  from: string;
+  to: string;
+}
 
 interface Props {
   date: Date;
@@ -19,8 +32,9 @@ export const TimeSlots = ({ date }: Props) => {
   const professionals = useFilteredProfessionals();
   const appointments = useAppointmentStore(state => state.appointments)
   const timeSlots = generateTimeSlots();
+  const [dialogData, setDialogData] = React.useState<DialogProps | null>(null);
 
-  const formattedDate = format(date, "yyyy-MM-dd")
+  const formattedDate = format(date, "yyyy-MM-dd");
 
   return (
     <div className='bg-white border rounded-lg overflow-hidden'>
@@ -44,35 +58,33 @@ export const TimeSlots = ({ date }: Props) => {
               <div className="h-16 border-b text-sm font-medium flex items-center justify-center">
                 {prof.name}
               </div>
-              {timeSlots.map((time) => {
-                const appointment = appointments.find(
-                  (a) =>
-                    a.professional_id === prof.id &&
-                    a.date === formattedDate &&
-                    a.from === time
-                );
-
-                return (
-                  <div
-                    key={time}
-                    className={`${!prof.enabled ? "bg-red-300" : ""} h-16 border-b flex items-center justify-center text-xs cursor-pointer`}
-                    onClick={() => { console.log("abrir dialog para turno") }}
-                  >
-                    {appointment ? (
-                      <span className="rounded bg-primary px-2 py-1 text-primary-foreground">
-                        {appointment.patient_name}
-                      </span>
-                    ) : (
-                      <span className="text-muted-foreground">{prof.enabled ? "Disponible" : "No disponible"}</span>
-                    )}
-                  </div>
-                );
-              })}
+              {
+                timeSlots.map((time) => (
+                  <TimeSlot
+                    key={`${prof.id}-${time}`}
+                    appointments={appointments}
+                    date={formattedDate}
+                    professional={prof}
+                    from={time}
+                    to={addMinutesToTime(time, 60)}
+                    onCreate={({ date, from, to }) => setDialogData({ date, from, to, professional: prof })}
+                  />
+                ))
+              }
             </div>
           ))}
         </div>
       </Card>
-
+      {dialogData && (
+        <AppointmentDialog
+          open={!!dialogData}
+          onOpen={(isOpen) => !isOpen && setDialogData(null)}
+          professional={dialogData.professional}
+          date={dialogData.date}
+          from={dialogData.from}
+          to={dialogData.to}
+        />
+      )}
     </div>
   )
 }
