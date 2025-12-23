@@ -1,23 +1,9 @@
 //appointment
 
 import { Appointment, Professional } from "@/types";
+import { isTimeInRange, timeToMinutes } from "./time";
+import { getScheduleForDay, getWeekDay } from "./schedule";
 
-//recibo un horario y lo estandarizo a minutos
-const timeToMinutes = (time: string): number => {
-  const [hours, minutes] = time.split(":").map(Number);
-  return hours * 60 + minutes;
-};
-
-//me sirve para comparar el rango del turno con la disponibilidad
-const isTimeInRange = (time: string, from: string, to: string): boolean => {
-  const t_min = timeToMinutes(time);
-  return t_min >= timeToMinutes(from) && t_min <= timeToMinutes(to);
-};
-
-const getWeekDay = (date: string) => {
-  const day = new Date(date + 'T00:00:00').toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
-  return day
-};
 
 export const isProfessionalEnabled = (professional: Professional) => {
   return professional.enabled
@@ -27,10 +13,14 @@ export const hasAbsenceOnDate = (professional: Professional, date: string) => {
   return professional.absences.some((absence) => absence.date === date);
 }
 
-export const isWithInWorkingHours = (prof: Professional, date: string, from: string, to: string): boolean => {
+export const isWorkOnDay = (professional: Professional, date: string): boolean => {
   const day = getWeekDay(date);
+  return professional.schedules.some((s) => s.day === day)
+}
+
+export const isWithInWorkingHours = (prof: Professional, date: string, from: string, to: string): boolean => {
   //pregunto si esta disp ese dia
-  const schedulesForDay = prof.schedules.filter((schedule) => schedule.day === day);
+  const schedulesForDay = getScheduleForDay(prof, date);
   if (schedulesForDay.length === 0) return false;
   //si está disp entonces comparo los horarios
   const isAvailableHours = schedulesForDay.some((schedule) => {
@@ -71,8 +61,18 @@ export const getSlotStatus = (prof: Professional, appointments: Appointment[], d
   if (!isProfessionalEnabled(prof)) {
     return "unavailable";
   }
+
+  if (!isWithInWorkingHours(prof, date, from, to)) {
+    return "unavailable"
+  }
+
   const isFree = isTimeSlotFree(prof.id, date, from, to, appointments);
   if (!isFree) return 'occupied';
 
   return 'available'
+}
+
+//medio al pedo
+export const isSlotAvailable = (prof: Professional, date: string, from: string, to: string, appointments: Appointment[]): boolean => {
+  return (isWithInWorkingHours(prof, date, from, to) && isTimeSlotFree(prof.id, date, from, to, appointments));
 }

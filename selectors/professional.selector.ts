@@ -1,9 +1,10 @@
 import { useMemo } from 'react';
 import { useShallow } from 'zustand/react/shallow';
-import { useProfessionalStore } from './professional.store';
+import { useProfessionalStore } from '../store/professional.store';
 import { Professional } from '@/types';
+import { isWorkOnDay } from '@/domain/availability';
 
-export const useFilteredProfessionals = (): Professional[] => {
+export const useFilteredProfessionals = (day: string): Professional[] => {
   const professionals = useProfessionalStore(useShallow(state => state.professionals));
   const nameFilter = useProfessionalStore(state => state.nameFilter);
   const showEnabled = useProfessionalStore(state => state.showEnabled);
@@ -16,7 +17,9 @@ export const useFilteredProfessionals = (): Professional[] => {
 
       const matchesStatus = showEnabled ? prof.enabled : true;
 
-      return matchesName && matchesStatus;
+      const matchesWorkDay = showEnabled ? isWorkOnDay(prof, day) : true
+
+      return matchesName && matchesStatus && matchesWorkDay;
     });
-  }, [professionals, nameFilter, showEnabled]);
+  }, [professionals, nameFilter, showEnabled, day]);
 };

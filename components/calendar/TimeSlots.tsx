@@ -2,12 +2,13 @@ import React from 'react';
 
 import { Card } from '../ui/card';
 import { format } from 'date-fns';
-import { useFilteredProfessionals } from '@/store/professional.selector';
+import { useFilteredProfessionals } from '@/selectors/professional.selector';
 import { useAppointmentStore } from '@/store/appointment.store';
 import { TimeSlot } from './TimeSlot';
 import { addMinutesToTime } from '@/utils/add-minutes-to-time';
 import { Professional } from '@/types';
 import { AppointmentDialog } from '../appointment/AppointmentDialog';
+import { isSlotAvailable } from '@/domain/availability';
 
 interface DialogProps {
   professional: Professional;
@@ -29,20 +30,20 @@ const generateTimeSlots = (start = 8, end = 18) => {
 };
 
 export const TimeSlots = ({ date }: Props) => {
-  const professionals = useFilteredProfessionals();
-  const appointments = useAppointmentStore(state => state.appointments)
+  const formattedDate = format(date, "yyyy-MM-dd");
+  const professionals = useFilteredProfessionals(formattedDate);
+  const appointments = useAppointmentStore(state => state.appointments);
   const timeSlots = generateTimeSlots();
   const [dialogData, setDialogData] = React.useState<DialogProps | null>(null);
 
-  const formattedDate = format(date, "yyyy-MM-dd");
 
   return (
-    <div className='bg-white border rounded-lg overflow-hidden'>
+    <div className='bg-white shadow-lg rounded-lg overflow-hidden'>
       <Card className="p-4 overflow-x-auto">
         <div className="grid grid-cols-[80px_repeat(auto-fill,minmax(200px,1fr))]">
           {/* Columna de horas */}
           <div className="flex flex-col">
-            <div className='h-16 border-b text-sm text-muted-foreground flex items-center justify-start pr-2'>Horas</div>
+            <div className='h-16 border-b text-sm text-muted-foreground flex items-center justify-start pr-2'>Horario</div>
             {timeSlots.map((time) => (
               <div
                 key={time}
@@ -59,17 +60,19 @@ export const TimeSlots = ({ date }: Props) => {
                 {prof.name}
               </div>
               {
-                timeSlots.map((time) => (
-                  <TimeSlot
-                    key={`${prof.id}-${time}`}
-                    appointments={appointments}
-                    date={formattedDate}
-                    professional={prof}
-                    from={time}
-                    to={addMinutesToTime(time, 60)}
-                    onCreate={({ date, from, to }) => setDialogData({ date, from, to, professional: prof })}
-                  />
-                ))
+                timeSlots.map((time) => {
+                  const to = addMinutesToTime(time, 60);
+                  const available = isSlotAvailable(prof, formattedDate, time, to, appointments)
+                  return (
+                    <TimeSlot
+                      key={`${prof.id}-${time}`}
+                      date={formattedDate}
+                      from={time}
+                      to={to}
+                      available={available}
+                      onCreate={({ date, from, to }) => setDialogData({ date, from, to, professional: prof })}
+                    />)
+                })
               }
             </div>
           ))}
@@ -77,7 +80,7 @@ export const TimeSlots = ({ date }: Props) => {
       </Card>
       {dialogData && (
         <AppointmentDialog
-          open={!!dialogData}
+          open={true}
           onOpen={(isOpen) => !isOpen && setDialogData(null)}
           professional={dialogData.professional}
           date={dialogData.date}
