@@ -2,25 +2,25 @@
 
 import React from 'react';
 import { Calendar } from "@/components/ui/calendar"
+import { TimeSlots } from './TimeSlots';
 
-interface Props {
-  onDate: (date: Date) => void;
-}
-export const CalendarDay = ({ onDate }: Props) => {
+export const CalendarDay = () => {
   const [date, setDate] = React.useState<Date>(new Date());
-
-
-  const handleDate = (date: Date = new Date()) => {
-    setDate(date)
-    onDate(date)
-  }
+  const handleDate = (date: Date = new Date()) => setDate(date)
 
   return (
-    <Calendar
-      mode="single"
-      selected={date}
-      onSelect={handleDate}
-      className="w-full rounded-lg"
-    />
+    <div className="grid grid-cols-12 items-start justify-between gap-4">
+      <div className='col-span-3'>
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={handleDate}
+          className="w-full rounded-lg shadow-lg"
+        />
+      </div>
+      <div className="col-span-9">
+        <TimeSlots date={date} />
+      </div>
+    </div>
   )
 }
