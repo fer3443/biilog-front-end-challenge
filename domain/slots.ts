@@ -1,4 +1,6 @@
+import { Appointment, Professional } from "@/types";
 import { addMinutesToTime } from "@/utils/add-minutes-to-time";
+import { isWithInWorkingHours } from "./availability";
 
 export const generateSlots = (from: string, to: string, interval = 30) => {
   const slots = [];
@@ -13,3 +15,38 @@ export const generateSlots = (from: string, to: string, interval = 30) => {
   }
   return slots
 }
+
+export const resolveSlot = ({
+  professional,
+  date,
+  from,
+  to,
+  appointments,
+}: {
+  professional: Professional;
+  date: string;
+  from: string;
+  to: string;
+  appointments: Appointment[];
+}) => {
+  const appointment = appointments.find(
+    a =>
+      a.professional_id === professional.id &&
+      a.date === date &&
+      a.from === from
+  );
+
+  if (appointment) {
+    return {
+      status: "busy" as const,
+      appointment,
+    };
+  }
+
+  const works = isWithInWorkingHours(professional, date, from, to);
+  if (!works) {
+    return { status: "disabled" as const };
+  }
+
+  return { status: "available" as const };
+};
