@@ -10,5 +10,5 @@ export interface Appointment {
   to: string;
   notes?: string; // Notas del paciente o motivo de consulta
   created_at?: Date; // Cuándo se creó la cita
-  updated_at?: string; // Última modificación
+  updated_at?: Date | null; // Última modificación
 };

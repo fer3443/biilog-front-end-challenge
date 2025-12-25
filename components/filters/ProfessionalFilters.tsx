@@ -5,6 +5,8 @@ import { useProfessionalStore } from '@/store/professional.store';
 import { Switch } from '../ui/switch';
 import { Label } from '../ui/label';
 import { IoSearch } from "react-icons/io5";
+import { CalendarComponent } from '../calendar/CalendarComponent';
+import { DayNavigator } from '../calendar/DayNavigator';
 
 export const ProfessionalFilters = () => {
   const nameFilter = useProfessionalStore(state => state.nameFilter);
@@ -13,23 +15,27 @@ export const ProfessionalFilters = () => {
   const toggleEnabled = useProfessionalStore(state => state.toggleEnabled);
 
   return (
-    <div className='w-full flex items-center justify-end gap-4'>
-      <div className='flex items-center gap-2'>
-        <Switch
-          id="enabled-filter"
-          checked={showEnabled}
-          onCheckedChange={toggleEnabled}
-        />
-        <Label htmlFor='enabled-filter'>Mostrar profesionales activos</Label>
-      </div>
-      <div className='flex items-center relative'>
-        <Input
-          className='min-w-lg rounded-xl'
-          placeholder='Buscar profesional'
-          value={nameFilter}
-          onChange={(e) => setNameFilter(e.target.value)}
-        />
-        <span className='absolute right-4'><IoSearch /></span>
+    <div className='w-full flex items-center justify-between gap-4 mt-4'>
+      <CalendarComponent />
+      <DayNavigator />
+      <div className='flex items-center gap-4'>
+        <div className='flex items-center gap-2'>
+          <Switch
+            id="enabled-filter"
+            checked={showEnabled}
+            onCheckedChange={toggleEnabled}
+          />
+          <Label htmlFor='enabled-filter'>Mostrar profesionales activos</Label>
+        </div>
+        <div className='flex items-center relative'>
+          <Input
+            className='min-w-[300px] rounded-xl bg-white'
+            placeholder='Buscar profesional'
+            value={nameFilter}
+            onChange={(e) => setNameFilter(e.target.value)}
+          />
+          <span className='absolute right-4'><IoSearch /></span>
+        </div>
       </div>
     </div>
   )

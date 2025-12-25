@@ -1,50 +1,66 @@
-import { Slot } from '@/types';
-import { WeeklyTimeSlot } from './WeeklyTimeSlot';
+import React from 'react';
+
+import { Appointment, Professional } from '@/types';
+import { TimeSlot } from './TimeSlot';
+import { resolveSlot } from '@/domain/slots';
+import { useCalendarSelection } from '@/hooks/useCalendarSelection';
+import { format } from 'date-fns';
+import { es } from 'date-fns/locale';
+
 
 interface Props {
+  professional: Professional
+  appointments: Appointment[];
   date: string;
   slots: {
     from: string;
     to: string;
     available: boolean;
   }[];
-  onSelectSlot: (slot: Slot) => void;
 }
 
-export const WeeklyDayColumn = ({ date, slots, onSelectSlot }: Props) => {
-  // const schedules = getScheduleForDay(professional, date);
+export const WeeklyDayColumn = ({ professional, appointments, date, slots }: Props) => {
+  const { handleDate } = useCalendarSelection();
 
-  // if (schedules.length === 0) {
-  //   return (
-  //     <div className='boreder rounded-lg p-2 text-center text-muted-foreground'>
-  //       <p className='font-semibold'>{label}</p>
-  //       <p className='text-xs'>No atiende</p>
-  //     </div>
-  //   )
-  // };
   return (
     <div className='border rounded p-2 space-y-1'>
-      <p className='font-semibold text-center text-sm'>{date}</p>
+      <p className='uppercase text-center'>{format(date, "EE", { locale: es })}</p>
+      <p className='font-semibold text-center text-sm'>{format(date, "dd")}</p>
       {
         !slots.length && (
           <p className='text-xs text-muted-foreground text-center'>No atiende</p>
         )
       }
 
-      {/* <p className='font-semibold text-center'>{label}</p>*/}
-
       {
-        slots.map((slot) =>
-          <WeeklyTimeSlot
-            key={`${date}-${slot.from}`}
-            date={date}
-            from={slot.from}
-            to={slot.to}
-            available={slot.available}
-            onSelect={onSelectSlot}
-          />
-        )
-      }
+        slots.map((s) => {
+          const slot = resolveSlot({ professional: professional, appointments, date, from: s.from, to: s.to });
+          const slotInfo = { from: s.from, to: s.to }
+          return (
+            <TimeSlot
+              key={`${date}-${s.from}`}
+              slot={slotInfo}
+              status={slot.status}
+              appointment={slot.appointment}
+              onCreate={() =>
+                handleDate(
+                  professional,
+                  date,
+                  s.from,
+                  s.to,
+                )}
+              onEdit={(appointment) =>
+                handleDate(
+                  professional,
+                  appointment.date,
+                  appointment.from,
+                  appointment.to,
+                  appointment
+                )
+              }
+            />)
+        }
+        )}
     </div>
   )
 }

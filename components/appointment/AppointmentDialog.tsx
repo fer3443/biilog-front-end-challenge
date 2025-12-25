@@ -1,15 +1,18 @@
 "use client"
 
+import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
-import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Input } from '../ui'
-import { Professional } from '@/types';
 import { toast } from "sonner"
 import { v4 as uuid } from 'uuid';
 import { zodResolver } from "@hookform/resolvers/zod"
+import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Input } from '../ui'
+import { Appointment, Professional } from '@/types';
 import { useAppointmentStore } from '@/store/appointment.store';
 import { AppointmentFormSchema, AppointmentFormValues } from '@/validators';
+import { Textarea } from '../ui/textarea';
 
 interface Props {
+  appointment?: Appointment;
   professional: Professional;
   date: string;
   from: string;
@@ -18,40 +21,67 @@ interface Props {
   onOpen: (open: boolean) => void;
 }
 
-export const AppointmentDialog = ({ professional, date, from, to, open, onOpen }: Props) => {
+export const AppointmentDialog = ({ appointment, professional, date, from, to, open, onOpen }: Props) => {
+  const isEdit = Boolean(appointment);
   const createAppointment = useAppointmentStore(state => state.createAppointment);
+  const updateAppointment = useAppointmentStore(state => state.updateAppointment);
 
   const form = useForm<AppointmentFormValues>({
     resolver: zodResolver(AppointmentFormSchema),
     defaultValues: {
-      patient_name: '',
-      patient_email: '',
-      patient_phone: '',
-      notes: '',
+      patient_name: appointment?.patient_name || "",
+      patient_email: appointment?.patient_email || "",
+      patient_phone: appointment?.patient_phone || "",
+      notes: appointment?.notes || ""
     }
   });
 
+  useEffect(() => {
+    if (open) {
+      form.reset({
+        patient_name: appointment?.patient_name || "",
+        patient_email: appointment?.patient_email || "",
+        patient_phone: appointment?.patient_phone || "",
+        notes: appointment?.notes || ""
+      })
+    }
+  }, [appointment, open, form])
 
   const handleSubmit = (values: AppointmentFormValues) => {
-    const success = createAppointment(professional, {
-      id: uuid(),
-      date: date,
-      from: from,
-      to: to,
-      patient_name: values.patient_name,
-      professional_id: professional.id,
-      professional_name: professional.name,
-      notes: values.notes,
-      patient_email: values.patient_email, // Handle potential empty string or undefined
-      patient_phone: values.patient_phone,
-      created_at: new Date(),
-      updated_at: ''
-    });
-    if (success) {
-      toast.success("Su turno ha sido creado con éxito")
-      onOpen(false)
+    if (isEdit && appointment) {
+      const success = updateAppointment(professional, {
+        ...appointment,
+        ...values,
+        date: date,
+        from: from,
+        to: to,
+        updated_at: new Date()
+      })
+
+      if (success) {
+        toast.success("Su turno fue actualizado con éxito")
+        onOpen(false)
+      } else {
+        toast.error("No se pudo actualizar el turno")
+      }
     } else {
-      toast.error("No se pudo crear el turno")
+      const success = createAppointment(professional, {
+        id: uuid(),
+        date: date,
+        from: from,
+        to: to,
+        professional_id: professional.id,
+        professional_name: professional.name,
+        created_at: new Date(),
+        ...values
+      });
+      if (success) {
+        form.reset()
+        toast.success("Su turno ha sido creado con éxito")
+        onOpen(false)
+      } else {
+        toast.error("No se pudo crear el turno")
+      }
     }
   }
 
@@ -122,7 +152,7 @@ export const AppointmentDialog = ({ professional, date, from, to, open, onOpen }
                   <FormItem>
                     <FormLabel>Motivo de consulta</FormLabel>
                     <FormControl>
-                      <Input placeholder="Nota opcional..." {...field} />
+                      <Textarea className='resize' placeholder="Nota opcional..." {...field} />
                     </FormControl>
                     <FormDescription className='text-xs'>Puede agregar una nota para detallar el motivo de la consulta.</FormDescription>
                     <FormMessage />
