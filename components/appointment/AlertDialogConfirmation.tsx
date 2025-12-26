@@ -22,7 +22,7 @@ export const AlertDialogConfirmation = ({ appointment, onClose }: Props) => {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger className='w-full bg-red-500 hover:bg-red-400 rounded-md text-white px-2 py-1.5 cursor-pointer'>
+      <AlertDialogTrigger className='w-full bg-red-400 hover:bg-red-500 rounded-md text-white px-2 py-1.5 cursor-pointer'>
         Eliminar
       </AlertDialogTrigger>
       <AlertDialogContent>
@@ -34,7 +34,7 @@ export const AlertDialogConfirmation = ({ appointment, onClose }: Props) => {
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
-          <AlertDialogAction onClick={handleDelete}>Confirmar</AlertDialogAction>
+          <AlertDialogAction onClick={handleDelete} className='bg-red-400 hover:bg-red-500 cursor-pointer'>Confirmar</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

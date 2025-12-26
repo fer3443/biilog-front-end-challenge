@@ -70,7 +70,6 @@ export const getSlotStatus = (prof: Professional, appointments: Appointment[], d
   return 'available'
 }
 
-//medio al pedo
 export const isSlotAvailable = (prof: Professional, date: string, from: string, to: string, appointments: Appointment[]): boolean => {
   if (hasAbsenceOnDate(prof, date)) return false;
   return (isWithInWorkingHours(prof, date, from, to) && isTimeSlotFree(prof.id, date, from, to, appointments));
