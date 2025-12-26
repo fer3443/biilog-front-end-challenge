@@ -1,4 +1,5 @@
 import { Appointment, SlotStatus } from "@/types";
+import { AppointmentCard } from "../appointment/AppointmentCard";
 
 interface TimeSlotProps {
   status: SlotStatus;
@@ -18,25 +19,26 @@ export const TimeSlot = ({
   onCreate,
   onEdit,
 }: TimeSlotProps) => {
+
   if (status === "busy" && appointment) {
     return (
-      <div
-        className="h-12 flex flex-col items-center justify-center border-b rounded-md bg-amber-100 px-2 text-xs cursor-pointer hover:bg-amber-200"
-        onClick={() => onEdit?.(appointment)}
-      >
-        <div className="font-medium truncate w-full text-center">
-          {appointment.patient_name}
-        </div>
-        <div className="text-muted-foreground truncate w-full text-center">
-          {appointment.from} - {appointment.to}
-        </div>
-      </div>
+      <AppointmentCard
+        appointment={appointment}
+        onEdit={() => onEdit?.(appointment)}
+      />
     );
   }
 
   if (status === "disabled") {
     return (
       <div className="h-12 border-b rounded-md bg-gray-50 text-gray-300 flex items-center justify-center">
+        <p className="text-xs">No disponible</p>
+      </div>
+    );
+  }
+  if (status === "absence") {
+    return (
+      <div className="h-12 border-b rounded-md bg-red-100 text-gray-300 flex items-center justify-center">
         <p className="text-xs">No disponible</p>
       </div>
     );

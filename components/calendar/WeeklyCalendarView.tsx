@@ -6,11 +6,17 @@ import { Professional } from '@/types';
 import { useCalendarStore } from '@/store/calendar.store';
 import { useAppointmentStore } from '@/store/appointment.store';
 import { Button } from '../ui';
+import { DndContext } from '@dnd-kit/core';
+import { useHandleDrag } from '@/hooks/useHandleDrag';
+
 
 export const WeeklyCalendarView = () => {
   const selectedProfessional = useCalendarStore(state => state.selectedProfessional) as Professional;
   const appointments = useAppointmentStore(state => state.appointments);
-  const goToDailyView = useCalendarStore(state => state.goToDailyView)
+  const goToDailyView = useCalendarStore(state => state.goToDailyView);
+  // const selectedDate = useCalendarStore(state => state.selectedDate);
+  const { sensors, handleDragEnd } = useHandleDrag(appointments, selectedProfessional)
+
   return (
 
     <div className='space-y-4 mt-4'>
@@ -19,11 +25,15 @@ export const WeeklyCalendarView = () => {
         <Button variant="ghost" onClick={goToDailyView}>volver a vista diaria</Button>
       </div>
       <WeeklyNavigator />
-
-      <WeeklyCalendar
-        appointments={appointments}
-        professional={selectedProfessional}
-      />
+      <DndContext
+        sensors={sensors}
+        onDragEnd={handleDragEnd}
+      >
+        <WeeklyCalendar
+          appointments={appointments}
+          professional={selectedProfessional}
+        />
+      </DndContext>
     </div>
 
   )

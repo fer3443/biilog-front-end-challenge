@@ -1,28 +1,35 @@
 "use client"
 
 import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { toast } from "sonner"
 import { v4 as uuid } from 'uuid';
 import { zodResolver } from "@hookform/resolvers/zod"
-import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Input } from '../ui'
+import { Button, Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage, Input, Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '../ui'
 import { Appointment, Professional } from '@/types';
 import { useAppointmentStore } from '@/store/appointment.store';
 import { AppointmentFormSchema, AppointmentFormValues } from '@/validators';
 import { Textarea } from '../ui/textarea';
+import { canMoveAppointment } from '@/domain/availability';
+import { generateSlots } from '@/domain/slots';
+import { calculateTime } from '@/domain/time';
 
 interface Props {
-  appointment?: Appointment;
   professional: Professional;
   date: string;
   from: string;
   to: string;
   open: boolean;
   onOpen: (open: boolean) => void;
+  appointment?: Appointment;
 }
+
+const timeSlots = generateSlots("08:00", "18:00");
+const DEFAULT_DURATION = 30;
 
 export const AppointmentDialog = ({ appointment, professional, date, from, to, open, onOpen }: Props) => {
   const isEdit = Boolean(appointment);
+  const appointments = useAppointmentStore(state => state.appointments)
   const createAppointment = useAppointmentStore(state => state.createAppointment);
   const updateAppointment = useAppointmentStore(state => state.updateAppointment);
 
@@ -32,9 +39,16 @@ export const AppointmentDialog = ({ appointment, professional, date, from, to, o
       patient_name: appointment?.patient_name || "",
       patient_email: appointment?.patient_email || "",
       patient_phone: appointment?.patient_phone || "",
-      notes: appointment?.notes || ""
+      notes: appointment?.notes || "",
+      from: appointment?.from || from,
+      to: appointment?.to || to,
+      date: appointment?.date || date,
+      duration: appointment?.duration || DEFAULT_DURATION
     }
   });
+
+  const fromValue = useWatch({ control: form.control, name: "from" });
+  const duration = useWatch({ control: form.control, name: "duration" });
 
   useEffect(() => {
     if (open) {
@@ -42,34 +56,40 @@ export const AppointmentDialog = ({ appointment, professional, date, from, to, o
         patient_name: appointment?.patient_name || "",
         patient_email: appointment?.patient_email || "",
         patient_phone: appointment?.patient_phone || "",
-        notes: appointment?.notes || ""
+        notes: appointment?.notes || "",
+        from: appointment?.from || from,
+        to: appointment?.to || to,
+        date: appointment?.date || date,
+        duration: appointment?.duration || DEFAULT_DURATION
       })
     }
-  }, [appointment, open, form])
+  }, [appointment, open, form, from, to, date]);
+
+  useEffect(() => {
+    if (!fromValue || !duration) return;
+
+    const newTo = calculateTime(fromValue, duration);
+    form.setValue("to", newTo, { shouldValidate: true });
+
+  }, [fromValue, duration, form]);
 
   const handleSubmit = (values: AppointmentFormValues) => {
     if (isEdit && appointment) {
-      const success = updateAppointment(professional, {
-        ...appointment,
-        ...values,
-        date: date,
-        from: from,
-        to: to,
-        updated_at: new Date()
-      })
+      const result = canMoveAppointment(
+        { ...appointment, ...values }, professional, values.date, values.from, appointments
+      )
 
-      if (success) {
+      if (!result.canMove) {
+        toast.error(result.reason)
+      } else {
+        // updateAppointment({ ...appointment, ...values, updated_at: new Date() })
+        updateAppointment(result.updatedAppointment!)
         toast.success("Su turno fue actualizado con éxito")
         onOpen(false)
-      } else {
-        toast.error("No se pudo actualizar el turno")
       }
     } else {
       const success = createAppointment(professional, {
         id: uuid(),
-        date: date,
-        from: from,
-        to: to,
         professional_id: professional.id,
         professional_name: professional.name,
         created_at: new Date(),
@@ -84,15 +104,13 @@ export const AppointmentDialog = ({ appointment, professional, date, from, to, o
       }
     }
   }
-
   return (
     <Dialog open={open} onOpenChange={onOpen}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader className='space-y-2'>
           <DialogTitle>Agendar un turno</DialogTitle>
-          <div className='flex items-center justify-between text-sm'>
-            <p><span className='font-semibold'>{professional.name}</span></p>
-            <p>Turno desde: <span className='font-semibold'>{from}</span> hasta: <span className='font-semibold'>{to}</span></p>
+          <div className='flex items-center justify-between'>
+            <p><span className='font-semibold text-base'>{professional.name}</span></p>
           </div>
           <DialogDescription className='text-xs font-semibold'>
             Debe completar los siguientes campos.
@@ -104,6 +122,65 @@ export const AppointmentDialog = ({ appointment, professional, date, from, to, o
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)}>
             <div className="grid gap-4">
+              <div className='flex items-center gap-2'>
+                <FormField
+                  control={form.control}
+                  name="date"
+                  render={({ field }) => (
+                    <FormItem className='flex-1'>
+                      <FormLabel>Fecha</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="from"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Desde</FormLabel>
+                      <FormControl>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger className="w-full">
+                            <SelectValue placeholder="hora" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectGroup>
+                              <SelectLabel>Desde</SelectLabel>
+                              {timeSlots.map((time, index) => (
+                                <SelectItem value={time.from} key={`${time.from}-${index}`}>
+                                  {time.from}
+                                </SelectItem>
+                              ))}
+                            </SelectGroup>
+                          </SelectContent>
+                        </Select>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="to"
+                  render={({ field }) => (
+                    <FormItem className='w-24'>
+                      <FormLabel>Hasta</FormLabel>
+                      <FormControl>
+                        <Input {...field} readOnly />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <FormField
                 control={form.control}
                 name="patient_name"
@@ -161,9 +238,13 @@ export const AppointmentDialog = ({ appointment, professional, date, from, to, o
               />
 
             </div>
-            <DialogFooter className='mt-4'>
-              <Button variant="outline" type='button' onClick={() => onOpen(false)}>Cancelar</Button>
-              <Button type="submit">Enviar</Button>
+            <DialogFooter className='mt-4 flex items-center justify-between!'>
+              {
+                isEdit
+                  ? <Button variant="ghost" type='button' onClick={() => onOpen(false)}>Eliminar</Button>
+                  : <Button variant="outline" type='button' onClick={() => onOpen(false)}>Cancelar</Button>
+              }
+              <Button disabled={form.formState.isSubmitting} type="submit">{isEdit ? "Guardar cambios" : "Confirmar turno"}</Button>
             </DialogFooter>
           </form>
         </Form>

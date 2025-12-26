@@ -1,7 +1,10 @@
 import { Professional, Schedule } from "@/types";
 
+import { parseISO, format } from 'date-fns';
+import { enUS } from 'date-fns/locale';
+
 export const getWeekDay = (date: string) => {
-  const day = new Date(date + 'T00:00:00').toLocaleDateString("en-US", { weekday: "long" }).toLowerCase();
+  const day = format(parseISO(date), 'EEEE', { locale: enUS }).toLowerCase();
   return day
 };
 

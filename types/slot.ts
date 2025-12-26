@@ -4,4 +4,4 @@ export interface Slot {
   to: string;
 }
 
-export type SlotStatus = "available" | "busy" | "disabled";
+export type SlotStatus = "available" | "busy" | "disabled" | "absence";
