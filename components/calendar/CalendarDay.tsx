@@ -11,7 +11,6 @@ import { toast } from 'sonner';
 
 
 export const CalendarDay = () => {
-  // const selectedProfessional = useCalendarStore(state => state.selectedProfessional) as Professional;
   const selectedDate = useCalendarStore(state => state.selectedDate);
   const formattedDate = format(selectedDate, "yyyy-MM-dd");
   const professionals = useFilteredProfessionals(formattedDate);
@@ -56,6 +55,7 @@ export const CalendarDay = () => {
         <ProfessionalFilters />
       </div>
       <div className="col-span-full">
+        <h3 className='text-xs text-slate-500 text-center mb-2'>Para agenda semanal, click en el profesional</h3>
         <DndContext
           sensors={sensors}
           onDragEnd={handleDragEnd}

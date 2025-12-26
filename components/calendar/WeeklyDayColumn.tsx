@@ -22,7 +22,7 @@ export const WeeklyDayColumn = ({ professional, appointments, date, slots }: Pro
   const { handleDate } = useCalendarSelection();
 
   return (
-    <div className='border rounded p-2 space-y-1'>
+    <div className='bg-slate-100 border rounded p-2 space-y-1'>
       <p className='uppercase text-center'>{format(parseISO(date), 'eee', { locale: es })}</p>
       <p className='font-semibold text-center text-sm'>{format(parseISO(date), 'dd', { locale: es })}</p>
       {

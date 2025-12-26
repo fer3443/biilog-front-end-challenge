@@ -41,7 +41,7 @@ export const TimeSlots = () => {
           {professionals.map((prof, index) => (
             <div key={prof.id} className={`flex flex-col border-l ${index === professionals.length - 1 ? "border-r" : ""}`}>
               <div
-                className="h-12 border-b text-sm font-medium flex items-center justify-center cursor-pointer"
+                className="h-12 hover:bg-slate-50 rounded-md border-b text-sm font-medium flex items-center justify-center cursor-pointer"
                 onClick={() => goToWeeklyView(prof)}
               >
                 {prof.name}
