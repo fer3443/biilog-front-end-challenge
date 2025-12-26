@@ -40,7 +40,7 @@ export const getWeeklySlots = (
   startDate: Date,
   appointments: Appointment[]
 ) => {
-  const weekStart = startOfWeek(startDate, { weekStartsOn: 1 });
+  const weekStart = startOfWeek(startDate, { weekStartsOn: 0 });
 
   const weeklySlots = Array.from({ length: 7 }).map((_, i) => {
     const day = addDays(weekStart, i);

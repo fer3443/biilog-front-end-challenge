@@ -9,7 +9,8 @@ export const CalendarView = () => {
   const selectedProfessional = useCalendarStore(state => state.selectedProfessional);
   const selectedSlot = useCalendarStore(state => state.selectedSlot)
   const setSelectedSlot = useCalendarStore(state => state.setSelectedSlot);
-  const appointment = useCalendarStore(state => state.appointment)
+  const setAppointment = useCalendarStore(state => state.setAppointment);
+  const appointment = useCalendarStore(state => state.appointment);
 
   return (
     <>
@@ -20,7 +21,10 @@ export const CalendarView = () => {
       {selectedSlot && selectedProfessional && (
         <AppointmentDialog
           open
-          onOpen={() => setSelectedSlot(null)}
+          onOpen={() => {
+            setSelectedSlot(null)
+            setAppointment(undefined)
+          }}
           professional={selectedProfessional}
           date={selectedSlot.date}
           from={selectedSlot.from}

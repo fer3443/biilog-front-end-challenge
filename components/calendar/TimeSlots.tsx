@@ -8,6 +8,7 @@ import { TimeSlot } from './TimeSlot';
 import { useCalendarStore } from '@/store/calendar.store';
 import { generateSlots, resolveSlot } from '@/domain/slots';
 import { useCalendarSelection } from '@/hooks/useCalendarSelection';
+import { TimeSlotDrag } from './TimeSlotDrag';
 
 const timeSlots = generateSlots("08:00", "18:00", 60);
 const professionalTimeSlots = generateSlots("08:00", "18:00")
@@ -40,7 +41,7 @@ export const TimeSlots = () => {
           {professionals.map((prof, index) => (
             <div key={prof.id} className={`flex flex-col border-l ${index === professionals.length - 1 ? "border-r" : ""}`}>
               <div
-                className="h-12 border-b text-sm font-medium flex items-center justify-center cursor-pointer"
+                className="h-12 hover:bg-slate-50 rounded-md border-b text-sm font-medium flex items-center justify-center cursor-pointer"
                 onClick={() => goToWeeklyView(prof)}
               >
                 {prof.name}
@@ -50,29 +51,36 @@ export const TimeSlots = () => {
                   const slot = resolveSlot({ professional: prof, date: formattedDate, from: time.from, to: time.to, appointments })
                   const slotInfo = { from: time.from, to: time.to }
                   return (
-                    <TimeSlot
+                    <TimeSlotDrag
+                      date={formattedDate}
+                      from={time.from}
+                      professionalId={prof.id}
                       key={`${prof.id}-${time.from}`}
-                      status={slot.status}
-                      slot={slotInfo}
-                      appointment={slot.appointment}
-                      onCreate={() =>
-                        handleDate(
-                          prof,
-                          formattedDate,
-                          time.from,
-                          time.to,
-                        )
-                      }
-                      onEdit={(appointment) =>
-                        handleDate(
-                          prof,
-                          appointment.date,
-                          appointment.from,
-                          appointment.to,
-                          appointment,
-                        )
-                      }
-                    />)
+                    >
+                      <TimeSlot
+                        slot={slotInfo}
+                        status={slot.status}
+                        appointment={slot.appointment}
+                        onCreate={() =>
+                          handleDate(
+                            prof,
+                            formattedDate,
+                            time.from,
+                            time.to,
+                          )
+                        }
+                        onEdit={(appointment) =>
+                          handleDate(
+                            prof,
+                            appointment.date,
+                            appointment.from,
+                            appointment.to,
+                            appointment,
+                          )
+                        }
+                      />
+                    </TimeSlotDrag>
+                  )
                 })
               }
             </div>

@@ -1,14 +1,15 @@
 import { isProfessionalAvailable } from "@/domain/availability";
 import { Appointment, Professional } from "@/types";
 import { create, type StateCreator } from "zustand";
-import { persist } from "zustand/middleware";
+import { devtools, persist } from "zustand/middleware";
 
 interface AppointmentState {
   appointments: Appointment[];
 
   createAppointment: (prof: Professional, app: Appointment) => boolean;
-  updateAppointment: (prof: Professional, app: Appointment) => boolean;
+  updateAppointment: (app: Appointment) => void;
   deleteAppointment: (appointmentId: string) => void;
+  applyAppointmentUpdate: (appointment: Appointment) => void;
 }
 
 const appointmentStore: StateCreator<AppointmentState> = (set, get) => ({
@@ -27,32 +28,28 @@ const appointmentStore: StateCreator<AppointmentState> = (set, get) => ({
     set((state) => ({ appointments: [...state.appointments, appointment] }))
     return true;
   },
-  updateAppointment: (professional: Professional, appointment: Appointment) => {
-    const appointments = get().appointments;
-    const othersAppointments = appointments.filter((app) => app.id !== appointment.id);
-
-    const isAvailable = isProfessionalAvailable(
-      professional,
-      othersAppointments,
-      appointment.date,
-      appointment.from,
-      appointment.to
-    );
-
-    if (!isAvailable) return false;
-    set({ appointments: [...othersAppointments, appointment] });
-    return true;
+  updateAppointment: (appointment: Appointment) => {
+    set((state) => ({
+      appointments: state.appointments.map((a) =>
+        a.id === appointment.id ? appointment : a
+      ),
+    }))
   },
   deleteAppointment: (appointmentId: string) => {
     const update = get().appointments.filter((app) => app.id !== appointmentId);
     set({ appointments: update })
-  }
+  },
+  applyAppointmentUpdate: (appointment) => set((state) => ({
+    appointments: state.appointments.map((a) => a.id === appointment.id ? appointment : a)
+  }))
 });
 
 
 export const useAppointmentStore = create<AppointmentState>()(
-  persist(
-    appointmentStore,
-    { name: 'appointment-storage' }
+  devtools(
+    persist(
+      appointmentStore,
+      { name: 'appointment-storage' }
+    )
   )
 )

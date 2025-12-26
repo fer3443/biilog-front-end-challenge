@@ -17,7 +17,7 @@ export const WeeklyCalendar = ({ professional, appointments }: Props) => {
 
   return (
     <div className='space-y-4'>
-      <div className='grid grid-cols-7 gap-2'>
+      <div className='shadow-lg grid grid-cols-7 gap-2'>
         {week.map((day) => {
           return (
             <WeeklyDayColumn

@@ -1,6 +1,6 @@
-import { Appointment, Professional } from "@/types";
+import { Appointment, Professional, SlotStatus } from "@/types";
 import { addMinutesToTime } from "@/utils/add-minutes-to-time";
-import { isWithInWorkingHours } from "./availability";
+import { hasAbsenceOnDate, isWithInWorkingHours } from "./availability";
 
 export const generateSlots = (from: string, to: string, interval = 30) => {
   const slots = [];
@@ -28,7 +28,10 @@ export const resolveSlot = ({
   from: string;
   to: string;
   appointments: Appointment[];
-}) => {
+}): {
+  status: SlotStatus,
+  appointment?: Appointment
+} => {
   const appointment = appointments.find(
     a =>
       a.professional_id === professional.id &&
@@ -41,6 +44,11 @@ export const resolveSlot = ({
       status: "busy" as const,
       appointment,
     };
+  }
+
+  const absence = hasAbsenceOnDate(professional, date)
+  if (absence) {
+    return { status: "absence" as const };
   }
 
   const works = isWithInWorkingHours(professional, date, from, to);

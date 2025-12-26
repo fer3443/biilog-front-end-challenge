@@ -1,7 +1,7 @@
 //appointment
 
 import { Appointment, Professional } from "@/types";
-import { isTimeInRange, timeToMinutes } from "./time";
+import { calculateTime, isTimeInRange, timeToMinutes } from "./time";
 import { getScheduleForDay, getWeekDay } from "./schedule";
 
 
@@ -11,6 +11,7 @@ export const isProfessionalEnabled = (professional: Professional) => {
 
 export const hasAbsenceOnDate = (professional: Professional, date: string) => {
   return professional.absences.some((absence) => absence.date === date);
+  // return professional.absences.some((absence) => absence.date <= date)
 }
 
 export const isWorkOnDay = (professional: Professional, date: string): boolean => {
@@ -74,5 +75,52 @@ export const getSlotStatus = (prof: Professional, appointments: Appointment[], d
 
 //medio al pedo
 export const isSlotAvailable = (prof: Professional, date: string, from: string, to: string, appointments: Appointment[]): boolean => {
+  if (hasAbsenceOnDate(prof, date)) return false;
   return (isWithInWorkingHours(prof, date, from, to) && isTimeSlotFree(prof.id, date, from, to, appointments));
+}
+
+export const canRescheduleAppointment = (prof: Professional, app: Appointment, appointments: Appointment[]): boolean => {
+  const to = calculateTime(app.from, app.duration)
+  const others = appointments.filter(a => a.id !== app.id);
+  return isProfessionalAvailable(
+    prof,
+    others,
+    app.date,
+    app.from,
+    to
+  )
+}
+
+interface canMoveAppointmentResp {
+  canMove: boolean;
+  reason?: string;
+  updatedAppointment?: Appointment
+}
+
+export const canMoveAppointment = (appointment: Appointment, professional: Professional, newDate: string, newFrom: string, appointments: Appointment[]): canMoveAppointmentResp => {
+
+  const newTo = calculateTime(newFrom, appointment.duration);
+  if (!isWithInWorkingHours(professional, newDate, newFrom, newTo)) {
+    return { canMove: false, reason: "El turno está fuera del horario laboral" }
+  }
+
+  if (!isProfessionalEnabled(professional) || hasAbsenceOnDate(professional, newDate)) {
+    return { canMove: false, reason: "El profesional no se encuentra disponible" }
+  }
+
+  const overlapping = appointments.some((app) => {
+    if (app.id === appointment.id) return false;
+    if (app.professional_id !== appointment.professional_id) return false;
+    if (app.date !== newDate) return false; //agrego esta condicion xq solo le permito cambiar de horario
+    return !(app.to <= newFrom || app.from >= newTo)
+  })
+
+  if (overlapping) {
+    return { canMove: false, reason: "Horario ocupado" }
+  }
+  // canRescheduleAppointment(professional, { ...appointment, date: newDate, from: newFrom, to: newTo }, appointments)
+  return {
+    canMove: true,
+    updatedAppointment: { ...appointment, updated_at: new Date() }
+  }
 }
