@@ -1,9 +1,6 @@
-//appointment
-
 import { Appointment, Professional } from "@/types";
-import { calculateTime, isTimeInRange, timeToMinutes } from "./time";
+import { calculateTime, isInThePast, isTimeInRange, timeToMinutes } from "./time";
 import { getScheduleForDay, getWeekDay } from "./schedule";
-
 
 export const isProfessionalEnabled = (professional: Professional) => {
   return professional.enabled
@@ -98,6 +95,9 @@ interface canMoveAppointmentResp {
 }
 
 export const canMoveAppointment = (appointment: Appointment, professional: Professional, newDate: string, newFrom: string, appointments: Appointment[]): canMoveAppointmentResp => {
+  if (isInThePast(newDate, newFrom)) {
+    return { canMove: false, reason: "No se pueden realizar cambios en esta fecha" }
+  }
 
   const newTo = calculateTime(newFrom, appointment.duration);
   if (!isWithInWorkingHours(professional, newDate, newFrom, newTo)) {
@@ -110,7 +110,7 @@ export const canMoveAppointment = (appointment: Appointment, professional: Profe
 
   const overlapping = appointments.some((app) => {
     if (app.id === appointment.id) return false;
-    if (app.professional_id !== appointment.professional_id) return false;
+    if (app.professional_id !== professional.id) return false;
     if (app.date !== newDate) return false; //agrego esta condicion xq solo le permito cambiar de horario
     return !(app.to <= newFrom || app.from >= newTo)
   })
@@ -118,9 +118,43 @@ export const canMoveAppointment = (appointment: Appointment, professional: Profe
   if (overlapping) {
     return { canMove: false, reason: "Horario ocupado" }
   }
-  // canRescheduleAppointment(professional, { ...appointment, date: newDate, from: newFrom, to: newTo }, appointments)
+
   return {
     canMove: true,
-    updatedAppointment: { ...appointment, updated_at: new Date() }
+    updatedAppointment: {
+      ...appointment,
+      date: newDate,
+      from: newFrom,
+      to: newTo,
+      professional_id: professional.id,
+      professional_name: professional.name,
+      updated_at: new Date()
+    }
   }
+}
+
+export interface CanCreateAppointmentResp {
+  canCreate: boolean;
+  reason?: string;
+  newAppointment?: Appointment
+}
+
+export const canCreateAppointment = (newAppointment: Appointment, professional: Professional, appointments: Appointment[]): CanCreateAppointmentResp => {
+  if (isInThePast(newAppointment.date, newAppointment.from)) {
+    return { canCreate: false, reason: "No se pueden crear turnos en fechas pasadas" }
+  }
+
+  if (!isWithInWorkingHours(professional, newAppointment.date, newAppointment.from, newAppointment.to)) {
+    return { canCreate: false, reason: "El turno está fuera del horario laboral" }
+  }
+
+  if (!isProfessionalEnabled(professional) || hasAbsenceOnDate(professional, newAppointment.date)) {
+    return { canCreate: false, reason: "El profesional no se encuentra disponible" }
+  }
+
+  if (!isTimeSlotFree(professional.id, newAppointment.date, newAppointment.from, newAppointment.to, appointments)) {
+    return { canCreate: false, reason: "El horario ya está ocupado" }
+  }
+
+  return { canCreate: true, newAppointment };
 }

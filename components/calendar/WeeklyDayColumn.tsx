@@ -43,6 +43,7 @@ export const WeeklyDayColumn = ({ professional, appointments, date, slots }: Pro
               key={`${date}-${s.from}`}
             >
               <TimeSlot
+                date={date}
                 slot={slotInfo}
                 status={slot.status}
                 appointment={slot.appointment}

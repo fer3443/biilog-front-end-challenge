@@ -1,4 +1,5 @@
 import { addMinutesToTime } from "@/utils/add-minutes-to-time";
+import { isBefore, parse } from "date-fns";
 
 //recibo un horario y lo estandarizo a minutos
 export const timeToMinutes = (time: string): number => {
@@ -14,4 +15,20 @@ export const isTimeInRange = (time: string, from: string, to: string): boolean =
 
 export const calculateTime = (from: string, duration: number): string => {
   return addMinutesToTime(from, duration)
+}
+
+
+export function parseDateTime(date: string, time: string): Date {
+  return parse(
+    `${date} ${time}`,
+    "yyyy-MM-dd HH:mm",
+    new Date()
+  );
+}
+
+export function isInThePast(date: string, from: string): boolean {
+  const slotDateTime = parseDateTime(date, from);
+  const now = new Date();
+
+  return isBefore(slotDateTime, now);
 }

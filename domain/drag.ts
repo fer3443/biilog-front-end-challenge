@@ -1,7 +1,6 @@
 import { Appointment, Professional } from "@/types";
 import { DragAppointmentIntent } from "@/types/drag";
-import { isProfessionalAvailable } from "./availability";
-import { addMinutesToTime } from "@/utils/add-minutes-to-time";
+import { canMoveAppointment } from "./availability";
 
 interface MoveResult {
   ok: boolean;
@@ -15,26 +14,15 @@ export function moveAppointment(intent: DragAppointmentIntent, appointments: App
     return { ok: false, reason: "No se encontró el turno" }
   }
 
-  const updated: Appointment = {
-    ...appointment,
-    date: intent.target_date,
-    from: intent.target_from,
-    to: addMinutesToTime(intent.target_from, appointment.duration),
-    professional_id: professional.id,
-    professional_name: professional.name,
-    updated_at: new Date()
-  }
+  const result = canMoveAppointment(appointment, professional, intent.target_date, intent.target_from, appointments);
 
-  const otherAppointments = appointments.filter((app) => app.id !== appointment.id);
-
-  const isAvailable = isProfessionalAvailable(professional, otherAppointments, updated.date, updated.from, updated.to);
-  if (!isAvailable) {
-    return { ok: false, reason: "Turno no disponible" }
+  if (!result.canMove) {
+    return { ok: false, reason: result.reason }
   }
 
   return {
     ok: true,
     reason: "Turno reprogramado con éxito",
-    updatedAppointment: updated
+    updatedAppointment: result.updatedAppointment
   }
 }

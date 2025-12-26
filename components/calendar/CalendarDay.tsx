@@ -55,7 +55,7 @@ export const CalendarDay = () => {
         <ProfessionalFilters />
       </div>
       <div className="col-span-full">
-        <h3 className='text-xs text-slate-500 text-center mb-2'>Para agenda semanal, click en el profesional</h3>
+        <h3 className='text-xs font-semibold text-slate-500 text-center mb-2'>Para ver agenda semanal, click en el nombre del profesional</h3>
         <DndContext
           sensors={sensors}
           onDragEnd={handleDragEnd}

@@ -1,6 +1,6 @@
 "use client"
 
-import { AppointmentDialog } from '@/components/appointment';
+import { AppointmentSheet } from '@/components/appointment';
 import { CalendarDay, WeeklyCalendarView } from '@/components/calendar';
 import { useCalendarStore } from '@/store/calendar.store';
 
@@ -19,7 +19,7 @@ export const CalendarView = () => {
       {calendarView === "weekly" && selectedProfessional && (<WeeklyCalendarView />)}
 
       {selectedSlot && selectedProfessional && (
-        <AppointmentDialog
+        <AppointmentSheet
           open
           onOpen={() => {
             setSelectedSlot(null)
