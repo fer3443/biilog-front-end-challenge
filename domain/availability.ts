@@ -8,7 +8,6 @@ export const isProfessionalEnabled = (professional: Professional) => {
 
 export const hasAbsenceOnDate = (professional: Professional, date: string) => {
   return professional.absences.some((absence) => absence.date === date);
-  // return professional.absences.some((absence) => absence.date <= date)
 }
 
 export const isWorkOnDay = (professional: Professional, date: string): boolean => {
@@ -17,10 +16,8 @@ export const isWorkOnDay = (professional: Professional, date: string): boolean =
 }
 
 export const isWithInWorkingHours = (prof: Professional, date: string, from: string, to: string): boolean => {
-  //pregunto si esta disp ese dia
   const schedulesForDay = getScheduleForDay(prof, date);
   if (schedulesForDay.length === 0) return false;
-  //si está disp entonces comparo los horarios
   const isAvailableHours = schedulesForDay.some((schedule) => {
     return (isTimeInRange(from, schedule.from, schedule.to) && isTimeInRange(to, schedule.from, schedule.to))
   });
@@ -31,7 +28,6 @@ export const isTimeSlotFree = (profId: string, date: string, from: string, to: s
   const fromMin = timeToMinutes(from);
   const toMin = timeToMinutes(to);
 
-  //tengo que mostrar turnos libres a traves de los que ya estan ocupados
   const isFree = !appointments.some((appointment) => {
     if (profId !== appointment.professional_id || date !== appointment.date) {
       return false
@@ -110,7 +106,7 @@ export const canMoveAppointment = (appointment: Appointment, professional: Profe
   const overlapping = appointments.some((app) => {
     if (app.id === appointment.id) return false;
     if (app.professional_id !== professional.id) return false;
-    if (app.date !== newDate) return false; //agrego esta condicion xq solo le permito cambiar de horario
+    if (app.date !== newDate) return false;
     return !(app.to <= newFrom || app.from >= newTo)
   })
 
