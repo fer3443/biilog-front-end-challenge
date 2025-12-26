@@ -16,7 +16,7 @@ export const WeeklyCalendar = ({ professional, appointments }: Props) => {
   const week = useMemo(() => getWeeklySlots(professional, baseDate, appointments), [professional, baseDate, appointments])
 
   return (
-    <div className='space-y-4'>
+    <div className='space-y-4 fade-in'>
       <div className='shadow-lg grid grid-cols-7 gap-2'>
         {week.map((day) => {
           return (
