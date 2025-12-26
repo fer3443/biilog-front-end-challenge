@@ -1,6 +1,6 @@
 import { Appointment, Professional, SlotStatus } from "@/types";
 import { addMinutesToTime } from "@/utils/add-minutes-to-time";
-import { hasAbsenceOnDate, isWithInWorkingHours } from "./availability";
+import { hasAbsenceOnDate, isProfessionalEnabled, isWithInWorkingHours } from "./availability";
 
 export const generateSlots = (from: string, to: string, interval = 30) => {
   const slots = [];
@@ -46,6 +46,9 @@ export const resolveSlot = ({
     };
   }
 
+  if (!isProfessionalEnabled(professional)) {
+    return { status: "disabled" as const }
+  }
   const absence = hasAbsenceOnDate(professional, date)
   if (absence) {
     return { status: "absence" as const };

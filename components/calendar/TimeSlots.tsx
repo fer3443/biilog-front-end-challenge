@@ -19,11 +19,19 @@ export const TimeSlots = () => {
   const professionals = useFilteredProfessionals(formattedDate);
   const appointments = useAppointmentStore(state => state.appointments);
   const goToWeeklyView = useCalendarStore(state => state.goToWeeklyView)
-  const { handleDate } = useCalendarSelection()
+  const { handleDate } = useCalendarSelection();
+
+  if (!professionals.length) {
+    return (
+      <div className='w-full bg-white shadow-lg rounded-lg overflow-hidden min-h-[750px] text-center flex items-center justify-center'>
+        <h2 className='text-2xl font-semibold text-gray-800'>No se encontraron profesionales</h2>
+      </div>
+    )
+  }
 
   return (
     <div className='bg-white shadow-lg rounded-lg overflow-hidden'>
-      <Card className="p-4 overflow-x-auto">
+      <Card className="p-4 overflow-scroll max-h-[750px]">
         <div className="grid grid-cols-[80px_repeat(auto-fill,minmax(200px,1fr))]">
           {/* Columna de horas */}
           <div className="flex flex-col">
@@ -58,6 +66,7 @@ export const TimeSlots = () => {
                       key={`${prof.id}-${time.from}`}
                     >
                       <TimeSlot
+                        date={formattedDate}
                         slot={slotInfo}
                         status={slot.status}
                         appointment={slot.appointment}

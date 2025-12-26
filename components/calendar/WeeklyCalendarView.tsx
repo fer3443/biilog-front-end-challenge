@@ -14,7 +14,6 @@ export const WeeklyCalendarView = () => {
   const selectedProfessional = useCalendarStore(state => state.selectedProfessional) as Professional;
   const appointments = useAppointmentStore(state => state.appointments);
   const goToDailyView = useCalendarStore(state => state.goToDailyView);
-  // const selectedDate = useCalendarStore(state => state.selectedDate);
   const { sensors, handleDragEnd } = useHandleDrag(appointments, selectedProfessional)
 
   return (
@@ -22,7 +21,7 @@ export const WeeklyCalendarView = () => {
     <div className='space-y-4 mt-4'>
       <div className='flex items-center justify-between'>
         <h2 className='text-xl font-semibold'>Agenda semanal de {selectedProfessional.name}</h2>
-        <Button variant="ghost" onClick={goToDailyView}>volver a vista diaria</Button>
+        <Button variant="outline" onClick={goToDailyView}>vista diaria</Button>
       </div>
       <WeeklyNavigator />
       <DndContext

@@ -8,7 +8,7 @@ interface AppointmentState {
 
   createAppointment: (prof: Professional, app: Appointment) => boolean;
   updateAppointment: (app: Appointment) => void;
-  deleteAppointment: (appointmentId: string) => void;
+  deleteAppointment: (appointmentId: string) => boolean;
   applyAppointmentUpdate: (appointment: Appointment) => void;
 }
 
@@ -38,6 +38,7 @@ const appointmentStore: StateCreator<AppointmentState> = (set, get) => ({
   deleteAppointment: (appointmentId: string) => {
     const update = get().appointments.filter((app) => app.id !== appointmentId);
     set({ appointments: update })
+    return true
   },
   applyAppointmentUpdate: (appointment) => set((state) => ({
     appointments: state.appointments.map((a) => a.id === appointment.id ? appointment : a)
