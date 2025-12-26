@@ -130,7 +130,7 @@ export const AppointmentSheet = ({ appointment, professional, date, from, to, op
             {isEdit ? "Modificar turno" : "Agendar turno"}
           </SheetTitle>
           <SheetDescription>
-            <span className='font-semibold text-base'>{professional.name}</span>
+            <span className='font-semibold text-lg'>{professional.name}</span>
           </SheetDescription>
         </SheetHeader>
         <div className='p-4 space-y-2'>
@@ -236,7 +236,7 @@ export const AppointmentSheet = ({ appointment, professional, date, from, to, op
                     <FormItem>
                       <FormLabel>Teléfono</FormLabel>
                       <FormControl>
-                        <Input disabled={isPast} placeholder="+541131234567" {...field} />
+                        <Input disabled={isPast} placeholder="+541131234567" type='tel' maxLength={15} {...field} />
                       </FormControl>
                       <FormDescription className='text-xs'>Ante cualquier cambio será informado por teléfono</FormDescription>
                       <FormMessage />
@@ -250,7 +250,7 @@ export const AppointmentSheet = ({ appointment, professional, date, from, to, op
                     <FormItem>
                       <FormLabel>Motivo de consulta</FormLabel>
                       <FormControl>
-                        <Textarea disabled={isPast} className='resize-none' placeholder="Nota opcional..." {...field} />
+                        <Textarea disabled={isPast} maxLength={250} className='resize-none' placeholder="Nota opcional..." {...field} />
                       </FormControl>
                       <FormDescription className='text-xs'>Puede agregar una nota para detallar el motivo de la consulta.</FormDescription>
                       <FormMessage />
@@ -259,14 +259,14 @@ export const AppointmentSheet = ({ appointment, professional, date, from, to, op
                 />
 
               </div>
-              <div className={`${isPast ? "hidden" : "mt-4 flex flex-col gap-4"} `}>
+              <div className={`${isPast ? "hidden" : "mt-4 flex flex-col gap-6"} `}>
                 <div className='flex justify-between items-center gap-x-4'>
-                  <Button className={`${!appointment ? "w-full" : "w-1/2"}`} disabled={form.formState.isSubmitting} type="submit">{isEdit ? "Guardar cambios" : "Confirmar turno"}</Button>
-                  {
-                    appointment && (<div className='w-1/2'><AlertDialogConfirmation appointment={appointment} onClose={onOpen} /></div>)
-                  }
+                  <Button className='flex-1 cursor-pointer' variant="outline" type='button' onClick={() => onOpen(false)}>Cancelar</Button>
+                  <Button className='flex-1 cursor-pointer' disabled={form.formState.isSubmitting} type="submit">{isEdit ? "Guardar cambios" : "Confirmar turno"}</Button>
                 </div>
-                <Button className='col-span-1' variant="outline" type='button' onClick={() => onOpen(false)}>Cancelar</Button>
+                {
+                  appointment && (<div className='w-full'><AlertDialogConfirmation appointment={appointment} onClose={onOpen} /></div>)
+                }
               </div>
             </form>
           </Form>

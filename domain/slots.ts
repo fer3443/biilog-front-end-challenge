@@ -61,3 +61,4 @@ export const resolveSlot = ({
 
   return { status: "available" as const };
 };
+
