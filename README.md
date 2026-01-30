@@ -205,8 +205,6 @@ El proyecto prioriza:
 
 * La respuesta de la api esta validada con zod.
 
-* Prueba de actualizacion de contenido
-
 # Changelog
 
 ## [3.2.0] - 2026-01-30
