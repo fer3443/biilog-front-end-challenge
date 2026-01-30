@@ -208,3 +208,9 @@ El proyecto prioriza:
 * Prueba de actualizacion de contenido
 
 # Changelog
+
+## [3.2.0] - 2026-01-30
+
+### Added
+
+- Sección liquidaciones de obras sociales, liquidación de profesionales y Mejores practicas.
