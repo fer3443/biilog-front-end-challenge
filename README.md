@@ -204,3 +204,11 @@ El proyecto prioriza:
 ## NOTA
 
 * La respuesta de la api esta validada con zod.
+
+# Changelog
+
+## [3.2.0] - 2026-01-30
+
+### Added
+
+- Sección liquidaciones de obras sociales, liquidación de profesionales y Mejores practicas.
