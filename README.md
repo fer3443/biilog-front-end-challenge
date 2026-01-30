@@ -204,3 +204,7 @@ El proyecto prioriza:
 ## NOTA
 
 * La respuesta de la api esta validada con zod.
+
+* Prueba de actualizacion de contenido
+
+# Changelog
