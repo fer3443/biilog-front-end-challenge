@@ -24,3 +24,7 @@ Todas las actualizaciones importantes de este proyecto se documentan aquí.
 
 ### Fixed
 - Error en la carga de fuentes tipográficas.
+
+## [1.3.0] - 2026-02-01 
+### Added
+ - Nueva funcionalidad de búsqueda en la documentación.
