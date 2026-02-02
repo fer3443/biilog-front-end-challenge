@@ -28,3 +28,4 @@ Todas las actualizaciones importantes de este proyecto se documentan aquí.
 ## [1.3.0] - 2026-02-01 
 ### Added
  - Nueva funcionalidad de búsqueda en la documentación.
+ - Prueba de configuraciones de archivo .yml

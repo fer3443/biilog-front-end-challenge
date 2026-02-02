@@ -2,3 +2,12 @@ github:
   owner: fer3443 
   repo: biilog-front-end-challenge
   path: CHANGELOG.md
+page:
+  title: POC - Open CHANGELOG
+  subtitle: "A proof of concept"
+  colorScheme: system
+  hidePoweredBy: false
+  logo:
+    src: https://docs.bilog.com.ar/logo-bilog-white.svg
+    link: https://www.bilog.com.ar/
+    alt: Bilog Logo
