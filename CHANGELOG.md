@@ -40,4 +40,4 @@ Todas las actualizaciones importantes de este proyecto se documentan aquí.
 
 ### Imagen agregada desde carpeta public
 ---
-![Desde Repo](/public/changelog-img.png)
+![Desde Repo](public/changelog-img.png)
