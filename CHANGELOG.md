@@ -34,10 +34,10 @@ Todas las actualizaciones importantes de este proyecto se documentan aquí.
 ### Migration
  - Migracion completada a Nextra v4
 
-### Imagen agregada desde url externo
+# Imagen agregada desde url externo
 ---
 ![Nueva Funcionalidad](https://docs.bilog.com.ar/web/online-schedule.jpg)
 
-### Imagen agregada desde carpeta public
+# Imagen agregada desde carpeta public
 ---
 ![Desde Repo](public/changelog-img.png)
