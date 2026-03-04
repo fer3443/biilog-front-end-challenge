@@ -7,7 +7,4 @@ page:
   subtitle: "A proof of concept"
   colorScheme: system
   hidePoweredBy: false
-  logo:
-    src: https://docs.bilog.com.ar/logo-bilog-white.svg
-    link: https://www.bilog.com.ar/
-    alt: Bilog Logo
+  hideContributors: false

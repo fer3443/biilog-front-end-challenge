@@ -33,5 +33,11 @@ Todas las actualizaciones importantes de este proyecto se documentan aquí.
 ## [1.4.0] - 2026-03-04
 ### Migration
  - Migracion completada a Nextra v4
+
+### Imagen agregada desde url externo
 ---
-![Nueva Funcionalidad]([https://mi-cdn.com/images/ui-v2.png](https://docs.bilog.com.ar/web/online-schedule.jpg))
+![Nueva Funcionalidad](https://docs.bilog.com.ar/web/online-schedule.jpg)
+
+### Imagen agregada desde carpeta public
+---
+![Desde Repo](/public/changelog-img.png)
