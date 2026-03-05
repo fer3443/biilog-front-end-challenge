@@ -30,7 +30,7 @@ Todas las actualizaciones importantes de este proyecto se documentan aquí.
  - Nueva funcionalidad de búsqueda en la documentación.
  - Prueba de configuraciones de archivo .yml
 
-## [1.4.0] - 2026-03-04
+## [administration] - 2026-03-04
 ### Migration
  - Migracion completada a Nextra v4
 
