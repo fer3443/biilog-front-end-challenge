@@ -37,7 +37,3 @@ Todas las actualizaciones importantes de este proyecto se documentan aquí.
 # Imagen agregada desde url externo
 ---
 ![Nueva Funcionalidad](https://docs.bilog.com.ar/web/online-schedule.jpg)
-
-# Imagen agregada desde carpeta public
----
-![Desde Repo](public/changelog-img.png)
