@@ -13,3 +13,11 @@ Solo tenés que escribir lo que necesitás y la asistente interpreta la solicitu
 \
 Además, cada operación requiere confirmación previa para **garantizar seguridad y control** sobre los cambios realizados.
 iAngela está diseñada para simplificar tareas administrativas y ayudarte a gestionar tu clínica de manera más eficiente.
+
+
+## iAngela - 2026-03-16
+### Added
+
+
+## [iAngela](/#) - 2026-03-16
+### Added
