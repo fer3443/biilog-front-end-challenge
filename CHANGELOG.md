@@ -16,22 +16,6 @@ Además, cada operación requiere confirmación previa para **garantizar segurid
 iAngela está diseñada para simplificar tareas administrativas y ayudarte a gestionar tu clínica de manera más eficiente.
 
 
-# iAngela - 2026-03-16
-### Added
-
-
-## [iAngela](/#https://ai.bilog.com.ar/) - 2026-03-16
-### Added
-
-# iAngela - 2026-03-16
-
-# [iAngela](/) - 2026-03-17
-## Added
-
-# [iAngela](#) - 2026-03-17
-
-# iAngela - 2026-03-18
-
 ### Added
 
 **iAngela**, asistente virtual con inteligencia artificial.
