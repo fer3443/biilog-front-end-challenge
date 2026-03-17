@@ -1,9 +1,7 @@
 # BILOG Changelog
 
-## [iAngela](#) - 2026-03-16
+## [iAngela](/#) - 2026-03-16
 ### Added
-
-#### iAngela
 
 **[iAngela](https://ai.bilog.com.ar/)**, asistente virtual con inteligencia artificial.
 \
@@ -21,7 +19,17 @@ iAngela está diseñada para simplificar tareas administrativas y ayudarte a ges
 ### Added
 
 
-## [iAngela](#) - 2026-03-16
+## [iAngela](/#https://ai.bilog.com.ar/) - 2026-03-16
 ### Added
 
 # iAngela - 2026-03-16
+
+# [iAngela](/) - 2026-03-17
+## Added
+
+# [iAngela](#) - 2026-03-17
+## Added
+
+<a href="https://ai.bilog.com.ar/" target="_blank" rel="noopener noreferrer">
+iAngela
+</a>
