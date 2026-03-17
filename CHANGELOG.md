@@ -1,6 +1,7 @@
 # BILOG Changelog
 
-## [iAngela](/#) - 2026-03-16
+## iAngela - 2026-03-16
+
 ### Added
 
 **[iAngela](https://ai.bilog.com.ar/)**, asistente virtual con inteligencia artificial.
@@ -15,7 +16,7 @@ Además, cada operación requiere confirmación previa para **garantizar segurid
 iAngela está diseñada para simplificar tareas administrativas y ayudarte a gestionar tu clínica de manera más eficiente.
 
 
-## iAngela - 2026-03-16
+# iAngela - 2026-03-16
 ### Added
 
 
@@ -30,6 +31,11 @@ iAngela está diseñada para simplificar tareas administrativas y ayudarte a ges
 # [iAngela](#) - 2026-03-17
 ## Added
 
-<a href="https://ai.bilog.com.ar/" target="_blank" rel="noopener noreferrer">
-iAngela
-</a>
+# iAngela - 2026-03-18
+
+### Added
+
+**iAngela**, asistente virtual con inteligencia artificial.
+
+🔗 Acceder a la asistente:  
+https://ai.bilog.com.ar/
