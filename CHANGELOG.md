@@ -16,8 +16,6 @@ Además, cada operación requiere confirmación previa para **garantizar segurid
 iAngela está diseñada para simplificar tareas administrativas y ayudarte a gestionar tu clínica de manera más eficiente.
 
 
-### Added
-
 **iAngela**, asistente virtual con inteligencia artificial.
 
 🔗 Acceder a la asistente:  
